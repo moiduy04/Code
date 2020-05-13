@@ -1,10 +1,10 @@
 struct edge{
 	int v,flow,cap,rev;
 	edge(const int& V, const int& passing_flow, 
-		 const int& capacity, const int& reverse_edge_index)
+		 const int& capacity, const int& reverse_edge_index_in_adjlist)
 	{
 		v = V, flow = passing_flow, 
-		cap = capacity, rev = reverse_edge_index;
+		cap = capacity, rev = reverse_edge_index_in_adjlist;
 	}
 };
 class graph{
