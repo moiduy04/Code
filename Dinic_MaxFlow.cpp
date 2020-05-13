@@ -7,11 +7,14 @@ struct edge{
 		cap = capacity, rev = reverse_edge_index_in_adjlist;
 	}
 };
+ostream& operator << (ostream &stream, const edge& e){
+	return stream << "connected to node " << e.v << " with (" << (e.rev ? e.rev : e.flow) << '/' << e.cap << ')';
+}
 class graph{
 	int n;
 	int *level;
-	vt<edge> *adjlist;
 public:
+	vt<edge> *adjlist;
 	graph(const int& N)
 	{
 		adjlist = new vt<edge>[N];
