@@ -19,13 +19,13 @@ struct NTT{
 	}
 		
 	static void init(){
-		li _ 	= 2;
-		while(!(mod_inverse(_, root_pw) == 1 && mod_inverse(_, root_pw >> 1) != 1)){
-			++_;
+		li _root = 2;
+		while(!(mod_inverse(_root, root_pw) == 1 && mod_inverse(_root, root_pw >> 1) != 1)){
+			++_root;
 		}
-		li _1 = mod_inverse(_, mod-2);
-		cout << "root is " 		<< _	<< endl;
-		cout << "root_1 is "	<< _1	<< endl;
+		li _root1 = mod_inverse(_root, mod-2);
+		cout << "root is " 		<< _root	<< endl;
+		cout << "root_1 is "	<< _root1	<< endl;
 	}
 //	Put constraints here:
 	const static li root 	= 31;		
