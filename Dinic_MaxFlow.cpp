@@ -22,10 +22,11 @@ public:
 		level = new int[N];
 	}
 	
-	void add(const int &u, const int &v, const int& cap)
+	void add(const int &u, const int &v, const int& cap = 1,
+			const int& currflow = 0)
 	{
-		adjlist[u].pb(edge(v,0,cap,adjlist[v].size()));
-		adjlist[v].pb(edge(u,0,0,adjlist[u].size()-1));
+		adjlist[u].pb(edge(v, currflow,cap,adjlist[v].size()));
+		adjlist[v].pb(edge(u,-currflow,0,adjlist[u].size()-1));
 	}
 	
 	queue<int> q;
@@ -51,7 +52,7 @@ public:
 	}
 	
 	int send_flow(const int& u, const int& t, int node[],
-				int flow)
+				const int& flow = INT_MAX)
 	{
 		if (u ^ t)
 		{
@@ -84,7 +85,7 @@ public:
 			{
 				int *node = new int[n+1];
 				fill(node, node + n, 0);
-				while(int flow = send_flow(s,t,node,INT_MAX))
+				while(int flow = send_flow(s,t,node))
 				{
 					ans += flow;
 				}
