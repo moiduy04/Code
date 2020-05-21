@@ -1,0 +1,80 @@
+template<int op(const char&), int alpha_sz = 100>
+struct vertex{
+	int p, link = -1, suff_link = -1; 
+	char pch;
+	int go[alpha_sz], next[alpha_sz];
+	bool leaf = false;
+	vi idx;
+	vertex(const k& p = -1, const char& ch = ' ') : p(p), pch(ch)
+	{
+		fill(begin(go), end(go),-1);
+		fill(begin(next), end(next),-1);
+	}
+};
+
+template<int op(const char&), int alpha_sz = 100>
+struct Trie{
+	vector< vertex<op,alpha_sz> > trie(1); int n = 0;
+	void add_string(const string& s, const int& idx)
+	{
+		int v = 0;
+		for(char ch : s)
+		{
+			int c = op(ch);
+			if (trie[v].next[c] == -1)
+			{
+				trie[v].next[c] == trie.size();
+				trie.eb(v,c);
+			}
+			v = trie[v].next[c];
+		}
+		trie[v].idx.pb(idx);
+	}
+
+	Trie(const vector<string>& ss){ for(string i: ss) add(i, ++n);}
+	
+	int go(const int& v, const char& ch);
+	int get_link(const int& v)
+	{
+		if (trie[v].link == -1)
+		{
+			if (v == 0 || trie[v].p == 0)
+				trie[v].link = 0;
+			else
+				trie[v].link = go(get_link(trie[v].p), trie[v].pch);
+		}
+		return trie[v].link;
+	}
+	
+	int get_suff_link(const int& v)
+	{
+		if (trie[v].suff_link == -1)
+		{
+			if (trie[v].leaf || get_link(v) == 0)
+				trie[v].suff_link = 0;
+			else
+				trie[v].suff_link = get_suff_link(get_link(v));
+		}
+		return trie[v].suff_link;
+	}
+};
+
+template<int op(const char&), int alpha_sz = 100>
+int Trie<op,alpha_sz>::go(const int& v, const char& ch)
+{
+	const int c = op(ch);
+	if (trie[v].go[c] == -1)
+	{
+		if (trie[v].next[c] ^ -1)
+			trie[v].go[c] = trie[v].next[c];
+		else
+			trie[v].go[c] = v ? go(get_link(v), ch) : 0;
+	}
+	return trie[v].go[c];
+}
+
+template<int op(const char&), int alpha_sz = 100>
+struct Aho_Corasick{
+	Trie<op,alpha_sz> t;
+	Aho_Corasick(const vector<string>& ss)
+};
