@@ -1,21 +1,21 @@
-template<int op(const char&), int alpha_sz = 100>
+template<int op(const char&), int alpha_sz>
 struct vertex{
 	int p, link = -1, suff_link = -1; 
 	char pch;
 	int go[alpha_sz], next[alpha_sz];
 	bool leaf = false;
 	vi idx;
-	vertex(const k& p = -1, const char& ch = ' ') : p(p), pch(ch)
+	vertex(const int& p = -1, const char& ch = ' ') : p(p), pch(ch)
 	{
 		fill(begin(go), end(go),-1);
 		fill(begin(next), end(next),-1);
 	}
 };
 
-template<int op(const char&), int alpha_sz = 100>
+template<int op(const char&), int alpha_sz>
 struct Trie{
-	vector< vertex<op,alpha_sz> > trie(1); int n = 0;
-	void add_string(const string& s, const int& idx)
+	vector< vertex<op,alpha_sz> > trie; int n = 0;
+	void add_string(const string& s, int id)
 	{
 		int v = 0;
 		for(char ch : s)
@@ -23,15 +23,17 @@ struct Trie{
 			int c = op(ch);
 			if (trie[v].next[c] == -1)
 			{
-				trie[v].next[c] == trie.size();
+				trie[v].next[c] = trie.size();
 				trie.eb(v,c);
 			}
 			v = trie[v].next[c];
 		}
-		trie[v].idx.pb(idx);
+		trie[v].leaf = true;
+		trie[v].idx.pb(id);
 	}
-
-	Trie(const vector<string>& ss){ for(string i: ss) add(i, ++n);}
+	Trie(){trie = vector<vertex<op,alpha_sz> >(1);}
+	Trie(vector<string>& ss){trie = vector<vertex<op,alpha_sz> >(1); for(string& i: ss) add_string(i, ++n);}
+	Trie& operator=(const Trie& other) const {trie = other.trie, n = other.n; return *this;} 
 	
 	int go(const int& v, const char& ch);
 	int get_link(const int& v)
@@ -50,8 +52,8 @@ struct Trie{
 	{
 		if (trie[v].suff_link == -1)
 		{
-			if (trie[v].leaf || get_link(v) == 0)
-				trie[v].suff_link = 0;
+			if (trie[get_link(v)].leaf || get_link(v) == 0)
+				trie[v].suff_link = get_link(v);
 			else
 				trie[v].suff_link = get_suff_link(get_link(v));
 		}
@@ -59,10 +61,10 @@ struct Trie{
 	}
 };
 
-template<int op(const char&), int alpha_sz = 100>
+template<int op(const char&), int alpha_sz>
 int Trie<op,alpha_sz>::go(const int& v, const char& ch)
 {
-	const int c = op(ch);
+	int c = op(ch);
 	if (trie[v].go[c] == -1)
 	{
 		if (trie[v].next[c] ^ -1)
@@ -76,5 +78,30 @@ int Trie<op,alpha_sz>::go(const int& v, const char& ch)
 template<int op(const char&), int alpha_sz = 100>
 struct Aho_Corasick{
 	Trie<op,alpha_sz> t;
-	Aho_Corasick(const vector<string>& ss)
+	Aho_Corasick(Trie<op,alpha_sz> t): t(t) {}
+	Aho_Corasick(vector<string>& ss) : t(Trie<op,alpha_sz>(ss)) {}
+	
+	vector<pair<int,int> > get(string text)
+	//return a vector of pairs:
+//		1st element is index at end of collision,
+//	 	2nd is index of colliding string
+	{
+		vector<pair<int,int> > res;
+		int v = 0;
+		for(int i = 0; i < text.length(); ++i)
+		{
+			v = t.go(v, text[i]);
+			int _v = v;
+			while(_v)
+			{
+				if (t.trie[_v].leaf) for(int id: t.trie[_v].idx) res.pb({i,id});
+				_v = t.get_suff_link(_v);
+			}
+		}
+		return res;
+	}
 };
+int op(const char& ch)
+{
+	return int(ch - ' ');
+}
