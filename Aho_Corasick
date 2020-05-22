@@ -1,11 +1,11 @@
 template<int op(const char&), int alpha_sz>
-struct vertex{
+struct trie_node{
 	int p, link = -1, suff_link = -1; 
 	char pch;
 	int go[alpha_sz], next[alpha_sz];
 	bool leaf = false;
 	vi idx;
-	vertex(const int& p = -1, const char& ch = ' ') : p(p), pch(ch)
+	trie_node(const int& p = -1, const char& ch = ' ') : p(p), pch(ch)
 	{
 		fill(begin(go), end(go),-1);
 		fill(begin(next), end(next),-1);
@@ -14,7 +14,7 @@ struct vertex{
 
 template<int op(const char&), int alpha_sz>
 struct Trie{
-	vector< vertex<op,alpha_sz> > trie; int n = 0;
+	vector< trie_node<op,alpha_sz> > trie; int n = 0;
 	void add_string(const string& s, int id)
 	{
 		int v = 0;
@@ -31,8 +31,8 @@ struct Trie{
 		trie[v].leaf = true;
 		trie[v].idx.pb(id);
 	}
-	Trie(){trie = vector<vertex<op,alpha_sz> >(1);}
-	Trie(vector<string>& ss){trie = vector<vertex<op,alpha_sz> >(1); for(string& i: ss) add_string(i, n++);}
+	Trie(){trie = vector<trie_node<op,alpha_sz> >(1);}
+	Trie(vector<string>& ss){trie = vector<trie_node<op,alpha_sz> >(1); for(string& i: ss) add_string(i, n++);}
 	Trie& operator=(const Trie& other) const {trie = other.trie, n = other.n; return *this;} 
 	
 	int go(const int& v, const char& ch);
