@@ -1,0 +1,53 @@
+template<int op(const char&), int alpha_sz>
+struct sa_node{
+	int len, link;
+	int next[alpha_sz];
+	sa_node(const int& len = -1, const int& link = 0): len(len), link(link)
+	{
+		fill(next,end(next), -1);
+	}
+};
+
+template<int op(const char&), int alpha_sz = 100>
+struct suffix_automaton{
+	vector<sa_node<op,alpha_sz> > st; int last;
+	void sa_extend(const char& ch)
+	{
+		int curr = st.size(), p = last, c = op(ch);
+		st.eb(st[last].len + 1);
+		while(p ^ -1 && st[p].next[c] == -1)
+		{
+			st[p].next[c] = last;
+			p = st[p].link;
+		}
+		if (p ^ 1) // if (p == 1) the constructor has already made link = 0;
+		{
+			int q = st[p].next[c];
+			if (st[p].len + 1 == st[q].len)
+			{
+				st[curr].link = q;
+			}
+			else
+			{
+				int clone = st.size();
+				st.eb(st[p].len + 1, st[q].link);
+				st[clone].next = st[q].next;
+				while(p ^ -1 && st[p].next[c] == q)
+				{
+					st[p].next[c] = clone;
+					p = st[p].link;
+				}
+				st[q].link = st[curr].link = clone;
+			}
+		}
+		last = curr;
+	}
+	void add_string(string& s) {for(char ch : s) sa_extend(ch);}
+	void add_char(char s[])    {for(char ch : s) sa_extend(ch);}
+	
+	suffix_automaton() {st = vector<sa_node<op,alpha_sz> >(1,sa_node<op,alpha_sz>(0,-1)); last = 0;}
+	suffix_automaton(const suffix_automaton& other) {st = other.st, last = other.last;}
+	suffix_automaton& operator=(const suffix_automaton& other) const {st = other.st, last = other.last;return *this;} 
+	suffix_automaton(const string& s) {st = vector<sa_node<op,alpha_sz> >(1,sa_node<op,alpha_sz>(0,-1)), last = 0; add_string(s);}
+	suffix_automaton(const char s[])  {st = vector<sa_node<op,alpha_sz> >(1,sa_node<op,alpha_sz>(0,-1)), last = 0;   add_char(s);}
+};
