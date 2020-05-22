@@ -24,7 +24,7 @@ struct Trie{
 			if (trie[v].next[c] == -1)
 			{
 				trie[v].next[c] = trie.size();
-				trie.eb(v,c);
+				trie.eb(v,ch);
 			}
 			v = trie[v].next[c];
 		}
@@ -32,7 +32,7 @@ struct Trie{
 		trie[v].idx.pb(id);
 	}
 	Trie(){trie = vector<vertex<op,alpha_sz> >(1);}
-	Trie(vector<string>& ss){trie = vector<vertex<op,alpha_sz> >(1); for(string& i: ss) add_string(i, ++n);}
+	Trie(vector<string>& ss){trie = vector<vertex<op,alpha_sz> >(1); for(string& i: ss) add_string(i, n++);}
 	Trie& operator=(const Trie& other) const {trie = other.trie, n = other.n; return *this;} 
 	
 	int go(const int& v, const char& ch);
@@ -101,7 +101,6 @@ struct Aho_Corasick{
 		return res;
 	}
 };
-int op(const char& ch)
-{
+int op(const char& ch){// function that turns char into int.
 	return int(ch - ' ');
 }
