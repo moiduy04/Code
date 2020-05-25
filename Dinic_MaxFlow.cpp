@@ -15,7 +15,7 @@ class flow_graph{
 	vi level;
 public:
 	vt<vt<flow_edge> > adjlist;
-	flow_graph(int N) {n = N, adjlist = vt<vt<flow_edge> >(N), level = vi(N);}
+	flow_graph(int N) {n = N, adjlist = vt<vt<flow_edge> >(N, vt<flow_edge>()), level = vi(N);}
 	flow_graph(const vt<vi> &other)    {n = other.size(), adjlist = vt<vt<flow_edge> >(n), level = vi(n); for(int i = 0; i < other.size(); ++i) for(int j: other[i]) add(i,j);};
 	flow_graph(const vt<vpii> &other)  {n = other.size(), adjlist = vt<vt<flow_edge> >(n), level = vi(n); for(int i = 0; i < other.size(); ++i) for(pii j: other[i]) add(i,j.fi, j.se);};
 	flow_graph(const flow_graph &other){n = other.adjlist.size(), adjlist = other.adjlist, level = vi(n);}
@@ -25,7 +25,7 @@ public:
 			const int& currflow = 0)
 	{
 		adjlist[u].pb(flow_edge(v, currflow,cap,adjlist[v].size()));
-		adjlist[v].pb(flow_edge(u,-currflow,0,adjlist[u].size()-1));
+		adjlist[v].pb(flow_edge(u, currflow,0,adjlist[u].size()-1));
 	}
 	
 	queue<int> q;
@@ -33,14 +33,12 @@ public:
 	{
 		fill(level.begin(), level.end(), -1);
 		q.push(s); level[s] = 0;
-		vt<flow_edge>::iterator i;
 		while(!q.empty())
 		{
 			int u = q.front(); q.pop();
-			for(i = adjlist[u].begin(); i != adjlist[u].end(); ++i)
+			for(flow_edge &e : adjlist[u])
 			{
-				flow_edge &e = *i;
-				if (level[e.v] < 0 && e.flow < e.cap)
+				if (level[e.v] == -1 && e.flow < e.cap)
 				{
 					level[e.v] = level[u] + 1;
 					q.push(e.v);
@@ -49,8 +47,8 @@ public:
 		}
 		return !(level[t] < 0);
 	}
-	
-	int send_flow(const int& u, const int& t, int node[],
+	vi node;
+	int send_flow(const int& u, const int& t,// int node[],
 				const int& flow = INT_MAX)
 	{
 		if (u ^ t)
@@ -60,12 +58,12 @@ public:
 				flow_edge e = adjlist[u][node[u]];
 				if (level[e.v] == level[u]+1 && e.flow < e.cap)
 				{
-					int	temp = send_flow(e.v, t, node, 
+					int	temp = send_flow(e.v, t, //node, 
 								min(flow, e.cap - e.flow));
 					if (temp > 0)
 					{
-						e.flow += temp,
-						adjlist[e.v][e.rev].flow = e.flow;
+						adjlist[u][node[u]].flow += temp,
+						adjlist[e.v][e.rev].flow -= temp;
 						return temp;
 					}
 				}
@@ -82,9 +80,8 @@ public:
 			int ans = 0;
 			while(bfs(s,t))
 			{
-				int *node = new int[n+1];
-				fill(node, node + n, 0);
-				while(int flow = send_flow(s,t,node))
+				node = vi(n+1,0);
+				while(int flow = send_flow(s,t))
 				{
 					ans += flow;
 				}
