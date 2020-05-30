@@ -1,32 +1,35 @@
 template<typename int_t>
 struct flow_edge{
-	int_t v,flow,cap,cost;
+	int v;
+	int_t flow,cap,cost;
 	flow_edge() {}
-	flow_edge(const int_t& V, const int_t& capacity, const int_t& price, const int_t& passing_flow) : v (V), flow(passing_flow), cap(capacity), cost(price) {}
+	flow_edge(const int& V, const int_t& capacity, const int_t& price, const int_t& passing_flow) : v (V), flow(passing_flow), cap(capacity), cost(price) {}
 };
 template<typename int_t>
 ostream& operator << (ostream &stream, const flow_edge<int_t>& e){
-	return stream << "connects to node " << e.v << " with (" << e.flow << '/' << e.cap << ')';
+	return stream << "---> " << e.v << " with (" << e.flow << '/' << e.cap << ')';
 }
-template<typename int_t, int_t T_MAX = INT_MAX>
+template<typename int_t>
 class flow_graph{
-	int_t n; pair<int_t,int_t> res = {-1,-1};
-	vi d,p,pe;
-	queue<int_t> q;
+	int_t T_MAX = std::numeric_limits<int_t>::max();
+	int n; pair<int_t,int_t> res = {-1,-1};
+	vector<int_t> d;
+	vector<int> p,pe;
+	queue<int> q;
 public:
 	bool mincost;
-	vt< vt<int_t> > adjlist;
+	vt< vt<int> > adjlist;
 	vt< flow_edge<int_t> > edge;
 	
-	flow_graph(const int_t& N, bool min_cost_compatibility = false) : n(N), mincost(min_cost_compatibility) {adjlist.assign(N,vector<int_t>());}
+	flow_graph(const int& N, bool min_cost_compatibility = false) : n(N), mincost(min_cost_compatibility) {adjlist.assign(N,vector<int>());}
 	
-	void add(const int_t &u, const int_t &v, const int_t& cap = 1, const int_t& cost = 0, const int_t& currflow = 0)
+	void add(const int &u, const int &v, const int_t& cap = 1, const int_t& cost = 0, const int_t& currflow = 0)
 	{
 		adjlist[u].pb(edge.size());	edge.pb(flow_edge<int_t>(v, cap, cost, currflow));
 		adjlist[v].pb(edge.size());	edge.pb(flow_edge<int_t>(u,   0,-cost,-currflow));
 	}
 	
-	void SPFA(const int_t& v0, vector<int_t>& d, vector<int_t>& p, vector<int_t>& pe)
+	void SPFA(const int& v0, vector<int_t>& d, vector<int>& p, vector<int>& pe)
 	{
 		d.assign(n, T_MAX); d[v0] = 0;
 		p.assign(n,-1); pe.assign(n,-1);
@@ -35,12 +38,12 @@ public:
 		
 		while(!q.empty())
 		{
-			int_t u = q.front(); q.pop();
+			int u = q.front(); q.pop();
 			inq[u] = false;
-			for(int_t i: adjlist[u])
+			for(int i: adjlist[u])
 			{
 				flow_edge<int_t> e = edge[i];
-				if (e.flow ^ e.cap && d[e.v] > d[u] + e.cost) 
+				if (e.flow != e.cap && d[e.v] > d[u] + e.cost) 
 				{
 					d[e.v] = d[u] + e.cost, p[e.v] = u,
 					pe[e.v] = i;
@@ -54,23 +57,23 @@ public:
 		}
 	}
 	
-	pair<int_t,int_t> min_cost(const int_t& s, const int_t& t, const int_t& K = T_MAX)
+	pair<int_t,int_t> min_cost(const int& s, const int& t, int_t K = int_t(-1))
 //	Does one of two things.
 //	 1, Of all flows from s->t with flow value K, return the lowest costing one's cost.
 //	 2, Returns a {min_cost, max_flow} pair
 	{
-		if (res.se ^ -1) return res;
+		if (res.se != -1) return res;
 		if (s ^ t && mincost)
 		{
+			if (K == -1) K = T_MAX;
 			int_t cost = 0, flow = 0;
-			vector<int_t> d,p,pe;
 			while(flow < K)
 			{
 				SPFA(s,d,p,pe);
 				if (p[t] == -1) break;
 				
 				int_t f = K - flow;
-				int_t curr = t;
+				int curr = t;
 				
 				while(curr ^ s)
 				{
@@ -94,18 +97,18 @@ public:
 		return {-1,-1};
 	}
 	
-	bool bfs(const int_t& s, const int_t& t)
+	bool bfs(const int& s, const int& t)
 	{
 		d.assign(n,-1); p.assign(n,0);
 		q.push(s); d[s] = 0;
 		
 		while(!q.empty())
 		{
-			int_t u = q.front(); q.pop();
+			int u = q.front(); q.pop();
 			for(int_t i : adjlist[u])
 			{
-				int_t v = edge[i].v;
-				if (edge[i].cap ^ edge[i].flow && d[v] < 0)
+				int v = edge[i].v;
+				if (edge[i].cap != edge[i].flow && d[v] < 0)
 				{
 					d[v] = d[u]+1; q.push(v);
 				}
@@ -115,13 +118,13 @@ public:
 		return d[t] > -1;
 	}
 	
-	int_t send_flow(const int_t& u, const int_t& t, const int_t& flow = T_MAX)
+	int_t send_flow(const int& u, const int& t, const int_t& flow)
 	{
 		if(u == t || !flow) return flow;
 		for(; p[u] < adjlist[u].size(); ++p[u])
 		{
-			int_t i = p[u], j = adjlist[u][i], v = edge[j].v;
-			if (edge[j].flow ^ edge[j].cap && d[v] == d[u]+1)
+			int i = p[u], j = adjlist[u][i], v = edge[j].v;
+			if (edge[j].flow != edge[j].cap && d[v] == d[u]+1)
 			{
 				int_t temp = send_flow(v,t,min(edge[j].cap - edge[j].flow, flow));
 				if (temp)
@@ -135,14 +138,14 @@ public:
 		return 0;
 	}
 	
-	int_t max_flow(const int_t& s, const int_t& t)
+	int_t max_flow(const int& s, const int& t)
 	{
-		if (res.se ^ -1) return res.se;
+		if (res.se != -1) return res.se;
 		if (mincost) return min_cost(s,t).se;
 		int_t ans = 0;
 		while(bfs(s,t))
 		{
-			while(int_t flow = send_flow(s,t))
+			while(int_t flow = send_flow(s,t,T_MAX))
 			{
 				ans += flow;
 			}
