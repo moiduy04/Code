@@ -1,0 +1,149 @@
+struct flow_edge{
+	int v,flow,cap,cost;
+	flow_edge() {}
+	flow_edge(const int& V, const int& capacity, const int& price, const int& passing_flow) : v (V), flow(passing_flow), cap(capacity), cost(price) {}
+};
+ostream& operator << (ostream &stream, const flow_edge& e){
+	return stream << "connected to node " << e.v << " with (" << e.flow << '/' << e.cap << ')';
+}
+class flow_graph{
+	int n; pii res = {-1,-1};
+	vi d,p,pe;
+	queue<int> q;
+public:
+	bool mincost;
+	vt<vt<int> > adjlist;
+	vt<flow_edge> edge;
+	
+	flow_graph(const int& N, bool min_cost_compatibility = false) : n(N), mincost(min_cost_compatibility) {adjlist.assign(N,vi());}
+	
+	void add(const int &u, const int &v, const int& cap = 1, const int& cost = 0, const int& currflow = 0)
+	{
+		adjlist[u].pb(edge.size());	edge.pb(flow_edge(v, cap, cost, currflow));
+		adjlist[v].pb(edge.size());	edge.pb(flow_edge(u,   0,-cost,-currflow));
+	}
+	
+	void SPFA(int v0, vector<int>& d, vector<int>& p, vector<int>& pe)
+	{
+		d.assign(n, INT_MAX); d[v0] = 0;
+		p.assign(n,-1); pe.assign(n,-1);
+		vector<bool> inq(n,false);
+		q.push(v0);
+		
+		while(!q.empty())
+		{
+			int u = q.front(); q.pop();
+			inq[u] = false;
+			for(int i: adjlist[u])
+			{
+				flow_edge e = edge[i];
+				if (e.flow ^ e.cap && d[e.v] > d[u] + e.cost) 
+				{
+					d[e.v] = d[u] + e.cost, p[e.v] = u,
+					pe[e.v] = i;
+					if (!inq[e.v])
+					{
+						inq[e.v] = true;
+						q.push(e.v);
+					}
+				}
+			}
+		}
+	}
+	
+	pii min_cost(const int& s, const int& t, const int& K = INT_MAX)
+//	Does one of two things.
+//	 1, Of all flows from s->t with flow value K, return the lowest costing one's cost.
+//	 2, Returns a {min_cost, max_flow} pair
+	{
+		if (res.se ^ -1) return res;
+		if (s ^ t && mincost)
+		{
+			int cost = 0, flow = 0;
+			vector<int> d,p,pe;
+			while(flow < K)
+			{
+				SPFA(s,d,p,pe);
+				if (p[t] == -1) break;
+				
+				int f = K - flow;
+				int curr = t;
+				
+				while(curr ^ s)
+				{
+					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
+					curr = p[curr];
+				}
+				
+				flow += f;
+				cost += f * d[t];
+				
+				curr = t;
+				while(curr ^ s)
+				{
+					edge[pe[curr]].flow   += f,
+					edge[pe[curr]^1].flow -= f;
+					curr = p[curr];
+				}
+			}
+			return res = {cost, flow};
+		}
+		return {-1,-1};
+	}
+	
+	bool bfs(const int& s, const int& t)
+	{
+		d.assign(n,-1); p.assign(n,0);
+		q.push(s); d[s] = 0;
+		
+		while(!q.empty())
+		{
+			int u = q.front(); q.pop();
+			for(int i : adjlist[u])
+			{
+				int v = edge[i].v;
+				if (edge[i].cap ^ edge[i].flow && d[v] < 0)
+				{
+					d[v] = d[u]+1; q.push(v);
+				}
+			}
+		}
+		
+		return d[t] > -1;
+	}
+	
+	int send_flow(const int& u, const int& t, const int& flow = INT_MAX)
+	{
+		if(u == t || !flow) return flow;
+		for(int &i = p[u]; i < adjlist[u].size(); ++i)
+		{
+			int j = adjlist[u][i], v = edge[j].v;
+			if (edge[j].flow ^ edge[j].cap && d[v] == d[u]+1)
+			{
+				int temp = send_flow(v,t,min(edge[j].cap - edge[j].flow, flow));
+				if (temp)
+				{
+					edge[ j ].flow += temp;
+					edge[j^1].flow -= temp;
+					return temp;
+				}
+			}
+		}
+		return 0;
+	}
+	
+	int max_flow(const int& s, const int& t)
+	{
+		if (res.se ^ -1) return res.se;
+		if (mincost) return min_cost(s,t).se;
+		int ans = 0;
+		while(bfs(s,t))
+		{
+			while(int flow = send_flow(s,t))
+			{
+				ans += flow;
+			}
+		}
+		return res.se = ans;
+	}
+};
