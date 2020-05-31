@@ -94,6 +94,7 @@ public:
 	}
 	
 	pair<val_t,val_t> min_cost(const hold_t& s, const hold_t& t, bool maxFlow = true)
+//	returns a {cost, flow} pair;
 	{
 		if (s ^ t)
 		{
