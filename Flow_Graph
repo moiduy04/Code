@@ -154,7 +154,7 @@ public:
 			}
 		}
 		
-		return d[t] > -1;
+		return d[t] >= 0;
 	}
 	
 	val_t send_flow(const hold_t& u, const hold_t& t, const val_t& flow)
