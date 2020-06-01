@@ -1,11 +1,11 @@
-template<typename val_t, typename hold_t>
+template<typename val_t, typename hold_t = int>
 struct flow_edge{
 	hold_t v;
 	val_t flow,cap,cost;
 	flow_edge() {}
 	flow_edge(const hold_t& V, const val_t& capacity, const val_t& price, const val_t& passing_flow) : v (V), flow(passing_flow), cap(capacity), cost(price) {}
 };
-template<typename val_t, typename hold_t>
+template<typename val_t, typename hold_t = int>
 ostream& operator << (ostream &stream, const flow_edge<val_t,hold_t>& e){
 	return stream << "--->" << e.v << " with (" << e.flow << '/' << e.cap << ')';
 }
