@@ -160,7 +160,7 @@ public:
 	val_t send_flow(const hold_t& u, const hold_t& t, const val_t& flow)
 	{
 		if(u == t || !flow) return flow;
-		for(; p[u] < adjlist[u].size(); ++p[u])
+		for(; p[u] < (hold_t)adjlist[u].size(); ++p[u])
 		{
 			hold_t i = p[u], j = adjlist[u][i], v = edge[j].v;
 			if (edge[j].flow != edge[j].cap && d[v] == d[u]+1)
