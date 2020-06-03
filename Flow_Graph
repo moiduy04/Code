@@ -57,7 +57,7 @@ public:
 		}
 	}
 	
-	val_t min_cost_for_K(const hold_t& s, const hold_t& t, val_t K)
+	val_t min_cost_K_flow(const hold_t& s, const hold_t& t, val_t K)
 //	returns the minimum cost amongst all flows from s->t with flow value K, 
 	{
 		if (s ^ t)
@@ -134,6 +134,45 @@ public:
 			return {cost,flow};
 		}
 		return {-1,-1};
+	}
+	
+	val_t max_flow_K_cost(const hold_t& s, const hold_t& t, val_t K)
+//	returns the maximum flow for a cost no more than K 
+	{
+		if (s ^ t)
+		{
+			val_t cost = 0, flow = 0;
+			while(true)
+			{
+				SPFA(s);
+				if(d[t] == T_MAX) break;
+				
+				val_t f = T_MAX;
+				hold_t curr = t;
+				
+				while(curr ^ s)
+				{
+					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
+					curr = p[curr];
+				}
+				
+				if (d[t] > 0) f = min(f, (K-cost)/d[t]);
+				if (f == 0) break;
+				
+				flow += f;
+				cost += f * d[t];
+				
+				curr = t;
+				while(curr ^ s)
+				{
+					edge[pe[curr]].flow   += f,
+					edge[pe[curr]^1].flow -= f;
+					curr = p[curr];
+				}
+			}
+			return flow;
+		}
+		return -1;
 	}
 	
 	bool bfs(const hold_t& s, const hold_t& t)
