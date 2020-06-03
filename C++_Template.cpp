@@ -47,10 +47,10 @@ void input()
 signed main()
 {
 //	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-//	freopen("FILE.inp","r",stdin); freopen("FILE.out","w",stdout);
-//	freopen("input.txt","r",stdin);
+	if (fopen("FILE.inp","r",stdin)) {freopen("FILE.inp","r",stdin); freopen("FILE.out","w",stdout);}
+	if (fopen("input.txt","r",stdin)) freopen("input.txt","r",stdin);
 	input();
 	return 0;
 }
 // with the aura of Dora, AC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!
-// Why is there node one in my row of exclamation marks?
+// Why is there a one in my row of exclamation marks?
