@@ -17,8 +17,8 @@ class flow_graph{
 	vector<hold_t> p,pe;
 	queue<hold_t> q;
 public:
-	vt< vt<hold_t> > adjlist;
-	vt< flow_edge<val_t,hold_t> > edge;
+	vector< vector<hold_t> > adjlist;
+	vector< flow_edge<val_t,hold_t> > edge;
 	
 	flow_graph(const hold_t& N) : n(N) {adjlist.assign(N,vector<hold_t>());}
 
