@@ -39,17 +39,14 @@ typedef complex<db> cpx;	typedef vt<cpx> vcpx;
 //	srand(chrono::steady_clock::now().time_since_epoch().count());
 //	freopen("input.txt","r",stdin);
 
-void input()
-{
 
-}
 
 signed main()
 {
 //	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 	if (fopen("FILE.inp","r")) {freopen("FILE.inp","r",stdin); freopen("FILE.out","w",stdout);}
 	if (fopen("input.txt","r")) freopen("input.txt","r",stdin);
-	input();
+	
 	return 0;
 }
 // with the aura of Dora, AC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!
