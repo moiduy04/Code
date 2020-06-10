@@ -12,7 +12,7 @@ ostream& operator << (ostream &stream, const flow_edge<val_t,hold_t>& e){
 template<typename val_t, typename hold_t = int>
 class flow_graph{
 	val_t T_MAX = std::numeric_limits<val_t>::max();
-	hold_t n; 
+	hold_t n;
 	vector<val_t> d;
 	vector<hold_t> p,pe;
 	queue<hold_t> q;
@@ -21,159 +21,13 @@ public:
 	vector< flow_edge<val_t,hold_t> > edge;
 	
 	flow_graph(const hold_t& N) : n(N) {adjlist.assign(N,vector<hold_t>());}
-
+	
 	void add(const hold_t &u, const hold_t &v, const val_t& cap = (val_t)1, const val_t& cost = 0, const val_t& currflow = 0)
 	{
 		adjlist[u].pb(edge.size());	edge.pb(flow_edge<val_t,hold_t>(v, cap, cost, currflow));
 		adjlist[v].pb(edge.size());	edge.pb(flow_edge<val_t,hold_t>(u,   0,-cost,-currflow));
 	}
-	
-	void SPFA(const hold_t& v0)
-	{
-		d.assign(n, T_MAX); d[v0] = 0;
-		p.assign(n, hold_t(-1)); pe.assign(n, hold_t(-1));
-		vector<bool> inq(n,false);
-		q.push(v0);
-		
-		while(!q.empty())
-		{
-			hold_t u = q.front(); q.pop();
-			inq[u] = false;
-			for(hold_t i: adjlist[u])
-			{
-				flow_edge<val_t,hold_t> &e = edge[i];
-				if (e.flow != e.cap && d[e.v] > d[u] + e.cost) 
-				{
-					d[e.v] = d[u] + e.cost, 
-					p[e.v] = u,
-					pe[e.v] = i;
-					if (!inq[e.v])
-					{
-						inq[e.v] = true;
-						q.push(e.v);
-					}
-				}
-			}
-		}
-	}
-	
-	val_t min_cost_K_flow(const hold_t& s, const hold_t& t, val_t K)
-//	returns the minimum cost amongst all flows from s->t with flow value K, 
-	{
-		if (s ^ t)
-		{
-			val_t cost = 0, flow = 0;
-			while(flow < K)
-			{
-				SPFA(s);
-				if (p[t] == -1) break;
-				
-				val_t f = K - flow;
-				hold_t curr = t;
-				
-				while(curr ^ s)
-				{
-					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
-					curr = p[curr];
-				}
-				
-				flow += f;
-				cost += f * d[t];
-				
-				curr = t;
-				while(curr ^ s)
-				{
-					edge[pe[curr]].flow   += f,
-					edge[pe[curr]^1].flow -= f;
-					curr = p[curr];
-				}
-			}
-			return cost;
-		}
-		return -1;
-	}
-	
-	pair<val_t,val_t> min_cost(const hold_t& s, const hold_t& t, bool maxFlow = true)
-//	returns a {cost, flow} pair;
-	{
-		if (s ^ t)
-		{
-			val_t cost = 0, flow = 0; 
-			while(true)
-			{
-				SPFA(s);
-				if (maxFlow)
-				{
-					if(d[t] == T_MAX) break;
-				}
-				else 
-				{
-					if (d[t] >= 0) break;
-				}
-				
-				val_t f = T_MAX;
-				hold_t curr = t;
-				
-				while(curr ^ s)
-				{
-					f = min(f, val_t(edge[pe[curr]].cap-edge[pe[curr]].flow));
-					curr = p[curr];
-				}
-				
-				flow += f, 
-				cost += f * d[t];
-
-				curr = t;
-				while(curr ^ s)
-				{
-					edge[pe[curr]].flow   += f,
-					edge[pe[curr]^1].flow -= f;
-					curr = p[curr];
-				}
-			}
-			return {cost,flow};
-		}
-		return {-1,-1};
-	}
-	
-	val_t max_flow_K_cost(const hold_t& s, const hold_t& t, val_t K)
-//	returns the maximum flow for a cost no more than K 
-	{
-		if (s ^ t)
-		{
-			val_t cost = 0, flow = 0;
-			while(true)
-			{
-				SPFA(s);
-				if(d[t] == T_MAX) break;
-				
-				val_t f = T_MAX;
-				hold_t curr = t;
-				
-				while(curr ^ s)
-				{
-					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
-					curr = p[curr];
-				}
-				
-				if (d[t] > 0) f = min(f, (K-cost)/d[t]);
-				if (f == 0) break;
-				
-				flow += f;
-				cost += f * d[t];
-				
-				curr = t;
-				while(curr ^ s)
-				{
-					edge[pe[curr]].flow   += f,
-					edge[pe[curr]^1].flow -= f;
-					curr = p[curr];
-				}
-			}
-			return flow;
-		}
-		return -1;
-	}
+	hold_t add_node(){adjlist.emplace_back(vector<hold_t>()); return n++;}
 	
 	bool bfs(const hold_t& s, const hold_t& t)
 	{
@@ -227,5 +81,152 @@ public:
 			}
 		}
 		return ans;
+	}
+	
+	void SPFA(const hold_t& v0)
+	{
+		d.assign(n, T_MAX); d[v0] = 0;
+		p.assign(n, hold_t(-1)); pe.assign(n, hold_t(-1));
+		vector<bool> inq(n,false); inq[v0] = true;
+		q.push(v0);
+		
+		while(!q.empty())
+		{
+			hold_t u = q.front(); q.pop();
+			for(hold_t i: adjlist[u])
+			{
+				flow_edge<val_t,hold_t> &e = edge[i];
+				if (e.flow != e.cap && d[e.v] > d[u] + e.cost) 
+				{
+					if (e.v ^ u) p[e.v] = u;
+					d[e.v] = d[u] + e.cost,
+					pe[e.v] = i;
+					if (!inq[e.v])
+					{
+						inq[e.v] = true;
+						q.push(e.v);
+					}
+				}
+			}
+			inq[u] = false;
+		}
+	}
+	
+	pair<val_t,val_t> min_cost(const hold_t& s, const hold_t& t, bool maxFlow = true)
+//	returns a {cost, flow} pair;
+	{
+		if (s ^ t)
+		{
+			val_t cost = 0, flow = 0; 
+			while(true)
+			{
+				SPFA(s);
+				if (maxFlow)
+				{
+					if(d[t] == T_MAX) break;
+				}
+				else 
+				{
+					if (d[t] >= 0) break;
+				}
+				
+				val_t f = T_MAX;
+				hold_t curr = t;
+				
+				while(curr ^ s)
+				{
+					f = min(f, val_t(edge[pe[curr]].cap-edge[pe[curr]].flow));
+					curr = p[curr];
+				}
+				
+				flow += f, 
+				cost += f * d[t];
+
+				curr = t;
+				while(curr ^ s)
+				{
+					edge[pe[curr]].flow   += f,
+					edge[pe[curr]^1].flow -= f;
+					curr = p[curr];
+				}
+			}
+			return {cost,flow};
+		}
+		return {-1,-1};
+	}
+	
+	val_t min_cost_K_flow(const hold_t& s, const hold_t& t, val_t K)
+//	returns the minimum cost amongst all flows from s->t with flow value K, 
+	{
+		if (s ^ t)
+		{
+			val_t cost = 0, flow = 0;
+			while(flow < K)
+			{
+				SPFA(s);
+				if (p[t] == -1) break;
+				
+				val_t f = K - flow;
+				hold_t curr = t;
+				
+				while(curr ^ s)
+				{
+					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
+					curr = p[curr];
+				}
+				
+				flow += f;
+				cost += f * d[t];
+				
+				curr = t;
+				while(curr ^ s)
+				{
+					edge[pe[curr]].flow   += f,
+					edge[pe[curr]^1].flow -= f;
+					curr = p[curr];
+				}
+			}
+			return cost;
+		}
+		return -1;
+	}
+	
+	val_t max_flow_K_cost(const hold_t& s, const hold_t& t, val_t K)
+//	returns the maximum flow for a cost no more than K 
+	{
+		if (s ^ t)
+		{
+			val_t cost = 0, flow = 0;
+			while(true)
+			{
+				SPFA(s);
+				if(d[t] == T_MAX) break;
+				
+				val_t f = T_MAX;
+				hold_t curr = t;
+				
+				while(curr ^ s)
+				{
+					f = min(f, edge[pe[curr]].cap-edge[pe[curr]].flow);
+					curr = p[curr];
+				}
+				
+				if (d[t] > 0) f = min(f, (K-cost)/d[t]);
+				if (f == 0) break;
+				
+				flow += f;
+				cost += f * d[t];
+				
+				curr = t;
+				while(curr ^ s)
+				{
+					edge[pe[curr]].flow   += f,
+					edge[pe[curr]^1].flow -= f;
+					curr = p[curr];
+				}
+			}
+			return flow;
+		}
+		return -1;
 	}
 };
