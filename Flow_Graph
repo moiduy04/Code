@@ -20,6 +20,7 @@ public:
 	vector< vector<hold_t> > adjlist;
 	vector< flow_edge<val_t,hold_t> > edge;
 	
+	flow_graph() : n(0) {}
 	flow_graph(const hold_t& N) : n(N) {adjlist.assign(N,vector<hold_t>());}
 	
 	void add(const hold_t &u, const hold_t &v, const val_t& cap = (val_t)1, const val_t& cost = 0, const val_t& currflow = 0)
