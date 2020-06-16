@@ -18,9 +18,9 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 #define pb push_back
 #define eb emplace_back
 #define gcd __gcd
-#define rep(i,str,end) for(int i = (str), i < (end); ++i)
-#define  rep(i, end) for(int i = 0; i <  (end); ++i)
-#define rep1(i, end) for(int i = 1; i <= (end); ++i)
+#define rep(i,s,end) for(int i = (s); i < (end); ++i)
+#define  rep(i, end)  for(int i = 0; i <  (end); ++i)
+#define rep1(i, end)  for(int i = 1; i <= (end); ++i)
 #define lb lower_bound
 #define ub upper_bound
 
