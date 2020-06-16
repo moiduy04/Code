@@ -53,7 +53,8 @@ typedef vector<bool> vb;
 
 signed main()
 {
-	fileopen(""); local_input(true);
+	fileopen(""); 
+	local_input(true);
 	
 	return 0;
 }
