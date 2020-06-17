@@ -44,6 +44,8 @@ typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ll> vll;
 typedef vector<bool> vb;
+typedef vector<pii> vpii;
+typedef vector<pll> vpll;
 #define pi 3.1415926535897932	//faster than pi = acos(-1); but sometimes doesn't work?
 //	srand(chrono::steady_clock::now().time_since_epoch().count());
 //	freopen("input.txt","r",stdin);
