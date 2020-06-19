@@ -1,3 +1,4 @@
+// I honestly don't recall who I copied this from.
 struct Line {
 // 		Line is in form of y = k*x + m;
 	mutable ll k, m, p;
