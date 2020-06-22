@@ -1,0 +1,89 @@
+const int MAX_N = 1000;
+const int MAX_E = (MAX_N*MAX_N) << 1 + 2;
+class graph{
+	struct graph_edge{
+		int v;
+		graph_edge* n;
+	};
+	typedef graph_edge* edge;
+	int n;
+	graph_edge pool[MAX_E];
+	edge top; vector<edge> adjlist;
+	vector<int> f,base,inb,inp,match;
+	vector<vector<int> ed;
+	vector<bool> inq;
+	queue<int> q;
+	graph(int n) : n(n), match(n,-1), adjlist(n), top(pool), f(n), base(n), inb(n), inp(n), ed(n,vector<int>(n)), inq(n,false) {}
+	
+	int get_lca(const int& root, int u, int v){
+		memset(inp,0,sizeof inp);
+		for(inp[u = base[u]] = 1; u != root; u = f[match[u]], inp[u = base[u]] = 1);
+		for(; !inp[v = base[v]]; v = f[match[v]]);
+		return v;
+	}
+	
+	inline void mark(const int& lca, int u){
+		while(base[u] != lca){
+			int v = match[u];
+			inb[base[u]] = inb[base[v]] = 1;
+			u = f[v];
+			if (base[u] != lca) f[u] = v;
+		}
+	}
+	
+	void blossom_contraction(const int& s, int u, int v){
+		int lca = get_lca(s,u,v);
+		memset(inb,0,sizeof inb);
+		mark(lca,u), mark(lca,v);
+		if (base[u] != lca) f[u] = v;
+		if (base[v] != lca) f[v] = u;
+		for(int u = 0; u < n; ++u){
+			if (inb[base[u]]){
+				base[u] = lca;
+				if (!inq[u]){
+					q.push(u), inq[u] = true;
+				}
+			}
+		}
+	}
+	
+	int bfs(int s)
+	{
+		memset(inq, 0, sizeof inq), memset(f,-1,sizeof f);
+		for(int i = 0; i < n; ++i) base[i] = i;
+		q = queue<int>(); q.push(s), inq[s] = true;
+		while(!q.empty())
+		{
+			int u = q.front(); q.pop();
+			for(edge e = adjlist[u]; e; e = e->n){
+				int v = e->v;
+				if (base[u] != base[v] && match[u] != v){
+					if(v == s || (match[v] != -1 && f[match[v]] != -1))
+						blossom_contraction(s,u,v);
+					else if (f[v] == -1){
+						f[v] = u;
+						if (match[v] == -1) return v;
+						else if (!inq[match[v]]){
+							q.push(match[v]), inq[match[v]] = true;
+						}
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	bool do_it(const int& u)
+	{
+		if (u == -1) return 0;
+		int v = f[u]; do_it(match[v]);
+		match[u] = v, match[v] = u;
+		return u != -1;
+	}
+	
+	int maximum_matching(){
+		int res = 0;
+		for(int u = 0; u < n; ++u) ans += (match[u] == -1) && do_it(bfs(u));
+		return ans;
+	}
+};
