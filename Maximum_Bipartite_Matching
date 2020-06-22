@@ -28,7 +28,7 @@ public:
 		return false;
 	}
   
-	int max_match() {
+	int maximum_matching() {
 		int ok = 1;
 		while (ok--) {
 			fill(Viz.begin(), Viz.end(), 0);
