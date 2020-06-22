@@ -3,9 +3,9 @@ class bipartite_graph {
 	
 public:
 	vector<vector<int>> adjlist;
-	bipartite_graph(const int& n, const int& m) : adjlist(n), L(n, -1), R(m, -1), Viz(n) {}
+	bipartite_graph(const int& n, const int& m) : L(n, -1), R(m, -1), Viz(n), adjlist(n) {}
 
-	void AddEdge(const int& a, const int& b) {adjlist[a].push_back(b);}
+	void add(const int& a, const int& b) {adjlist[a].push_back(b);}
 
 	bool Match(const int node) {
 		if (Viz[node]) return false;
