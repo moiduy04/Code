@@ -1,5 +1,5 @@
-const int MAX_N = 10;
-const int MAX_E = ((MAX_N*MAX_N) << 1) + 7;
+const int MAX_N = 1001;
+const int MAX_E = ((MAX_N*MAX_N) << 1) | 1;
 struct graph{
 	struct graph_edge{int v; graph_edge* n;};
 	typedef graph_edge* edge;
@@ -16,7 +16,7 @@ struct graph{
 		if (!ed[u][v]) {
 			ed[u][v] = true;
 			top->v = v, top->n = adjlist[u], adjlist[u] = top++;
-			top->v = v, top->n = adjlist[v], adjlist[v] = top++;
+			top->v = u, top->n = adjlist[v], adjlist[v] = top++;
 		}
 	}
 	
@@ -89,4 +89,4 @@ struct graph{
 		for(int u = 0; u < n; ++u) res += (match[u] == -1) && do_it(bfs(u));
 		return res;
 	}
-};
+}; // Remember to set MAX_N;
