@@ -32,6 +32,7 @@ struct Trie{
 		trie[v].idx.pb(id);
 	}
 	Trie(){trie = vector<trie_node<op,alpha_sz> >(1);}
+	Trie(string& ss){trie = vector<trie_node<op,alpha_sz> >(1); add_string(ss, n++);}
 	Trie(vector<string>& ss){trie = vector<trie_node<op,alpha_sz> >(1); for(string& i: ss) add_string(i, n++);}
 	Trie& operator=(const Trie& other) const {trie = other.trie, n = other.n; return *this;} 
 	
@@ -79,6 +80,7 @@ template<int op(const char&), int alpha_sz = 100>
 struct Aho_Corasick{
 	Trie<op,alpha_sz> t;
 	Aho_Corasick(Trie<op,alpha_sz> t): t(t) {}
+	Aho_Corasick(string& ss) : t(Trie<op,alpha_sz>(ss)) {}
 	Aho_Corasick(vector<string>& ss) : t(Trie<op,alpha_sz>(ss)) {}
 	
 	vector<pair<int,int> > get(string text)
