@@ -54,10 +54,10 @@ typedef vector<pll> vpll;
 
 signed main()
 {
-	fileopen(""); 
+	fileopen("");
 	local_input(true);
-	
+
 	return 0;
 }
 // with the aura of Dora, AC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!
-/* Why is there a one in my row of exclamation marks?
+// Why is there a one in my row of exclamation marks?
