@@ -10,8 +10,6 @@ using namespace std;
 #pragma GCC optimize("unroll-loops")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-
 #define fi first
 #define se second
 #define mp make_pair
@@ -26,9 +24,9 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 #define vt vector
 #define endl "\n"
 
-#define fileopen(filename) if (fopen(filename".INP", "r")) {freopen(filename".INP", "r", stdin);freopen(filename".OUT", "w", stdout);}
+#define fileopen(filename, in_type, out_type) if (fopen(filename in_type, "r")) {freopen(filename in_type, "r", stdin);freopen(filename out_type, "w", stdout);}
 #define local_input(x) if (x && fopen("input.txt","r")) freopen("input.txt","r",stdin);
-#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+#define fastio ios_base::sync_with_stdio(false), cin.tie(NULL), cout.tie(NULL)
 
 #define fscan(x)   scanf("%d",  &x)
 #define fscandb(x) scanf("%lf", &x)
@@ -54,10 +52,11 @@ typedef vector<pll> vpll;
 
 signed main()
 {
-	fileopen("");
+//	fastio;
+	fileopen("kingdom",".in",".out"); 
 	local_input(true);
 
 	return 0;
 }
-// with the aura of Dora, AC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!
+// with the aura of Dora, AC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Why is there a one in my row of exclamation marks?
