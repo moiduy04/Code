@@ -26,6 +26,7 @@ using namespace std;
 
 #define fileopen(filename, in_type, out_type) if (fopen(filename in_type, "r")) {freopen(filename in_type, "r", stdin);freopen(filename out_type, "w", stdout);}
 #define local_input(x) if (x && fopen("input.txt","r")) freopen("input.txt","r",stdin);
+#define rand_seed() srand(chrono::steady_clock::now().time_since_epoch().count());
 #define fastio ios_base::sync_with_stdio(false), cin.tie(NULL), cout.tie(NULL)
 
 #define fscan(x)   scanf("%d",  &x)
