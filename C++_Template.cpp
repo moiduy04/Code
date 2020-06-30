@@ -54,7 +54,7 @@ typedef vector<pll> vpll;
 signed main()
 {
 //	fastio;
-	fileopen("kingdom",".in",".out"); 
+	fileopen("",".in",".out"); 
 	local_input(true);
 
 	return 0;
