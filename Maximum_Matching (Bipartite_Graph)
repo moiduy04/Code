@@ -1,7 +1,5 @@
-class bipartite_graph {
+struct bipartite_graph {
 	vector<int> L, R, Viz;
-	
-public:
 	vector<vector<int>> adjlist;
 	bipartite_graph(const int& n, const int& m) : L(n, -1), R(m, -1), Viz(n), adjlist(n) {}
 
