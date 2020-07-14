@@ -1,14 +1,11 @@
 //	Totally unrelated and not AT ALL stolen from hohohaha's, generic_placeholder_name's or katoriyuu's template
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/trie_policy.hpp>
-#include <ext/rope>
 
 using namespace std;
 
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+#pragma GCC optimize("O3")
+// #pragma GCC optimize("unroll-loops")
+#pragma GCC target("avx")
 
 #define fi first
 #define se second
@@ -17,16 +14,17 @@ using namespace std;
 #define eb emplace_back
 #define gcd __gcd
 #define rep(i,s,end) for(int i = (s); i <  (end); ++i)
+#define rep0(i, end) for(int i =   0; i <= (end); ++i)
 #define rep1(i, end) for(int i =   1; i <= (end); ++i)
 #define lb lower_bound
 #define ub upper_bound
 
 #define vt vector
-#define endl "\n"
+#define endl '\n'
 
 #define fileopen(filename, in_type, out_type) if (fopen(filename in_type, "r")) {freopen(filename in_type, "r", stdin);freopen(filename out_type, "w", stdout);}
 #define local_input(x) if (x && fopen("input.txt","r")) freopen("input.txt","r",stdin);
-#define rand_seed() srand(chrono::steady_clock::now().time_since_epoch().count());
+#define rand_seed srand(chrono::steady_clock::now().time_since_epoch().count());
 #define fastio ios_base::sync_with_stdio(false), cin.tie(NULL), cout.tie(NULL)
 
 #define fscan(x)   scanf("%d",  &x)
@@ -36,8 +34,8 @@ using namespace std;
 //			You are closer than you think.
 //						_Dan Lok_
 
-typedef double db;
-typedef long long ll;
+#define db double
+#define ll long long
 typedef pair<int,int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
