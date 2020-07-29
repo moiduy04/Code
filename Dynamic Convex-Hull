@@ -1,0 +1,54 @@
+set<pair<int,int>> up,down;
+int  ccw(const pair<int,int>& a, const pair<int,int>& b, const pair<int,int>& c){
+	int res = a.fi*(b.se-c.se)+b.fi*(c.se-a.se)+c.fi*(a.se-b.se);
+	if(res > 0) return  1;// counter-clock-wise
+	if(res < 0) return -1;// clock-wise
+	return 0;
+}
+bool  in(const pair<int,int>& p, set<pair<int,int>>& convex, const int& side){
+	if(p == *convex.begin() || p == *convex.rbegin()) return true;
+	
+	auto l = convex.lb(p);
+	if(l == convex.end() || l == convex.begin()) return false;
+	pair<int,int> c = *prev(l);
+	int res = ccw(p,*l,c);
+	return res != side || !res;
+}
+void add(const pair<int,int>& p, set<pair<int,int>>& convex, const int& side){
+	if(convex.size() < 2) convex.insert(p);
+	else if(!in(p,convex,side)){
+		convex.insert(p); auto np = convex.find(p);
+		if(np != convex.begin()){
+			auto l = prev(np);
+			while(l != convex.begin()){
+				auto l1 = prev(l);
+				if(ccw(*l1,*l,p) == -side){
+					convex.erase(l); l = l1;
+				}
+				else break;
+			}
+		}
+		if(np != --convex.end()){
+			auto l = next(np);
+			while(l != --convex.end()){
+				auto l1 = next(l);
+				if(ccw(*l,*l1,p) == -side){
+					convex.erase(l); l = l1;
+				}
+				else break;
+			}
+		}
+	}
+	return;
+}
+void add(const int& x, const int& y){
+	pair<int,int> p = mp(x,y);
+	add(p,up,1), add(p,down,-1); return;
+}
+
+bool in(const pair<int,int>& p){
+	return in(p,up,1) && in(p,down,-1);
+}
+inline void query(int x, int y){
+	cout << (in({x,y}) ? "YES\n" : "NO\n"); return;
+}
